@@ -1,0 +1,485 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BSC Hastedt – Strafenkatalog</title>
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Custom Styles -->
+<link rel="stylesheet" href="./css/style.css?v=20260119">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ===== LOGIN MODAL ===== -->
+<div id="loginModal" class="modal active">
+  <div class="modal-content" style="max-width: 400px; margin-top: 80px;">
+    <div class="modal-header" style="background: linear-gradient(90deg, #003d82 0%, #005a9c 100%); color: #fff; padding: 20px; font-size: 18px; font-weight: bold; border-radius: 10px 10px 0 0;">🔐 BSC Hastedt - Anmelden</div>
+
+    <div class="modal-body" style="padding: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #003d82;">E-Mail</label>
+      <input type="email" id="loginEmail" placeholder="deine.email@example.com" style="width: 100%; padding: 10px; margin-bottom: 16px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px;">
+
+      <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #003d82;">Passwort</label>
+      <input type="password" id="loginPassword" placeholder="Passwort" style="width: 100%; padding: 10px; margin-bottom: 16px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px;">
+
+      <div id="loginError" style="color: #c62828; font-weight: 600; margin-top: 12px; display: none;"></div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary" onclick="handleLogin()" style="width: 100%;">Anmelden</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <button class="hamburger-btn" onclick="toggleMenu()" title="Menü">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="logo-placeholder">
+    <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Logos/BSC_Logo.png" alt="BSC Hastedt Logo" style="width: 100%; height: 100%; object-fit: contain;">
+  </div>
+  <h1>Strafenkatalog BSC Hastedt 1. Herren</h1>
+</header>
+
+<nav>
+  <button onclick="show('dashboard')" class="nav-main">🏠 Dashboard</button>
+  
+  <div class="nav-category">✍️ ERFASSUNG</div>
+  <button onclick="show('strafen')" class="nav-sub">💸 Strafen erfassen</button>
+  <button onclick="show('guthaben')" class="nav-sub">💳 Guthaben erfassen</button>
+  
+  <div class="nav-category">📈 BERICHTE</div>
+  <button onclick="show('zahlungen')" class="nav-sub">💰 Zahlungsübersicht</button>
+  
+  <div class="nav-category">📊 VERWALTUNG</div>
+  <button onclick="show('mannschaft')" class="nav-sub">⚽ Mannschaft</button>
+  <button onclick="show('katalog')" class="nav-sub">📋 Strafenkatalog</button>
+</nav>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard" class="section">
+  <h2>Dashboard</h2>
+  
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card total">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Strafen Gesamt</div>
+          <div class="kpi-value" id="kpiTotal">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/strafen.png" alt="Strafen" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card paid">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Bezahlt</div>
+          <div class="kpi-value" id="kpiPaid">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/geld.png" alt="Bezahlt" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card open">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Noch Offen</div>
+          <div class="kpi-value" id="kpiOpen">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/Sanduhr.png" alt="Noch Offen" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card members">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Spieler</div>
+          <div class="kpi-value" id="kpiMembers">0</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/Spieler.png" alt="Spieler" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card trainer">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Trainer</div>
+          <div class="kpi-value" id="kpiTrainer">0</div>
+        </div>
+         <img src=https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/Trainer.png alt="Betreuer" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card betreuer">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Betreuer</div>
+          <div class="kpi-value" id="kpiBetreuer">0</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/Betreuer.png" alt="Betreuer" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Rankings -->
+  <div class="dashboard-row">
+    <div class="dashboard-card">
+      <h3>Top 5 - Meiste Strafen</h3>
+      <div class="bar-chart" id="topMostChart"></div>
+    </div>
+    <div class="dashboard-card">
+      <h3>Top 5 - Wenigste Strafen</h3>
+      <div class="bar-chart" id="topLeastChart"></div>
+    </div>
+  </div>
+
+  <!-- Häufigste Strafen -->
+  <div class="dashboard-row">
+    <div class="dashboard-card" style="grid-column: 1 / -1;">
+      <h3>Häufigste Strafarten</h3>
+      <div class="frequency-list" id="frequencyList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MANNSCHAFT ===== -->
+<div id="mannschaft" class="section">
+  <h2>Mannschaft</h2>
+  <div class="search-container">
+    <input type="text" id="mitgliedSearch" placeholder="🔍 Mitglied suchen...">
+    <select id="mitgliedTypeFilter">
+      <option value="">Alle</option>
+      <option value="spieler">Spieler</option>
+      <option value="trainer">Trainer</option>
+      <option value="betreuer">Betreuer</option>
+    </select>
+    <button onclick="resetMitgliedFilter()">✕</button>
+  </div>
+  <button class="primary" onclick="openMitgliedModal()"><span style="color: white; font-weight: bold; font-size: 18px;">+</span> Mitglied</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Typ</th>
+        <th>Trikot</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody id="liste"></tbody>
+  </table>
+</div>
+
+<!-- ===== STRAFENKATALOG ===== -->
+<div id="katalog" class="section">
+  <h2>Strafenkatalog</h2>
+  <div class="search-container">
+    <input type="text" id="regelSearch" placeholder="🔍 Regel suchen...">
+    <select id="regelCategoryFilter">
+      <option value="">Alle</option>
+      <option value="training">Training</option>
+      <option value="spieltag">Spieltag</option>
+    </select>
+    <button onclick="resetRegelFilter()">✕</button>
+  </div>
+  <button class="primary" onclick="openRegelModal()"><span style="color: white; font-weight: bold; font-size: 18px;">+</span> Regel</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Kategorie</th>
+        <th>Name</th>
+        <th>Grund (€)</th>
+        <th>€/Min</th>
+        <th>Sperre</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody id="regelnListe"></tbody>
+  </table>
+</div>
+
+<!-- ===== STRAFEN ===== -->
+<div id="strafen" class="section">
+  <h2>Strafen</h2>
+  <div class="search-container">
+    <input type="text" id="strafeSearch" placeholder="🔍 Strafe suchen...">
+    <select id="strafeCategoryFilter">
+      <option value="">Alle</option>
+      <option value="training">Training</option>
+      <option value="spieltag">Spieltag</option>
+    </select>
+    <button onclick="resetStrafeFilter()">✕</button>
+  </div>
+  <button class="primary" onclick="editStrafeId.value = ''; openStrafeForm()"><span style="color: white; font-weight: bold; font-size: 18px;">+</span> Strafe</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Kategorie</th>
+        <th>Mitglied</th>
+        <th>Grund</th>
+        <th>Minuten</th>
+        <th>Betrag</th>
+        <th>Bezahlt</th>
+        <th>Sperre</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody id="strafenListe"></tbody>
+  </table>
+</div>
+
+<!-- ===== ZAHLUNGEN ===== -->
+<div id="zahlungen" class="section">
+  <h2>Zahlungsübersicht</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Mitglied</th>
+        <th>Gezahlt (€)</th>
+        <th>Offene Strafen (€)</th>
+        <th>Gesamt (€)</th>
+      </tr>
+    </thead>
+    <tbody id="zahlungsListe"></tbody>
+  </table>
+</div>
+
+<!-- ===== GUTHABEN ===== -->
+<div id="guthaben" class="section">
+  <h2>Guthaben / Vorauszahlungen</h2>
+  <button class="primary" onclick="openGutschriftModal()">➕ Guthaben/Vorauszahlung erfassen</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Mitglied</th>
+        <th>Betrag</th>
+        <th>Zahlungsart</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody id="guthabenListe"></tbody>
+  </table>
+</div>
+
+<!-- ===== ALERT MODAL ===== -->
+<div id="alertModal" class="modal">
+  <div class="modal-content" style="max-width: 420px;">
+    <div class="alert-icon" id="alertIcon">⚠️</div>
+    <div class="modal-header" id="alertTitle" style="text-align: center; margin-top: 16px;">Meldung</div>
+    <div class="modal-body">
+      <p id="alertMessage" style="margin: 0; color: var(--blue); line-height: 1.6; text-align: center;"></p>
+    </div>
+    <div class="modal-buttons">
+      <button class="primary" onclick="closeAlert()" style="flex: 1;">Verstanden</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MITGLIED MODAL ===== -->
+<div id="mitgliedModal" class="modal">
+  <div class="modal-content">
+    <input type="hidden" id="editId">
+    <div class="modal-header">Mitglied anlegen/bearbeiten</div>
+
+    <div class="modal-body">
+      <label>Vorname</label>
+      <input id="vorname">
+
+      <label>Nachname</label>
+      <input id="nachname">
+
+      <label>Typ</label>
+      <select id="typ">
+        <option value="spieler">Spieler</option>
+        <option value="trainer">Trainer</option>
+        <option value="betreuer">Betreuer</option>
+      </select>
+
+      <label>Trikotnummer</label>
+      <input id="trikotnummer" type="number">
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary" onclick="speichern()">💾 Speichern</button>
+      <button class="secondary" onclick="closeMitgliedModal()">❌ Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGEL MODAL ===== -->
+<div id="regelModal" class="modal">
+  <div class="modal-content">
+    <input type="hidden" id="regelId">
+    <div class="modal-header">Regel anlegen/bearbeiten</div>
+
+    <div class="modal-body">
+      <label>Kategorie</label>
+      <select id="kategorie">
+        <option value="training">Training</option>
+        <option value="spieltag">Spieltag</option>
+      </select>
+
+      <label>Bezeichnung</label>
+      <select id="regelName">
+        <option value="NEU">✏️ Neue Bezeichnung eingeben</option>
+        <option value="">-- Wählen --</option>
+        <option value="Nicht erschienen">Nicht erschienen</option>
+        <option value="Zu spät mit Bescheid">Zu spät mit Bescheid</option>
+        <option value="Zu spät ohne Bescheid">Zu spät ohne Bescheid</option>
+        <option value="Zu spät">Zu spät</option>
+        <option value="Falsche Kleidung">Falsche Kleidung</option>
+        <option value="Gelbe Karte">Gelbe Karte</option>
+        <option value="Gelb-Rot">Gelb-Rot</option>
+        <option value="Rote Karte">Rote Karte</option>
+      </select>
+
+      <div id="neueBezeichnungGroup" style="display: none; margin-top: 12px;">
+        <label>Neue Bezeichnung</label>
+        <input id="neueBezeichnung" placeholder="Bezeichnung eingeben">
+      </div>
+
+      <label>Grundbetrag (€)</label>
+      <input id="grundbetrag" type="number" step="0.01">
+
+      <label>Betrag pro Minute (€)</label>
+      <input id="betragProMinute" type="number" step="0.01">
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="sperreNaechstesSpiel">
+        <label for="sperreNaechstesSpiel">Sperre für nächstes Spiel</label>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary" onclick="speichernRegel()">💾 Speichern</button>
+      <button class="secondary" onclick="closeRegelModal()">❌ Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STRAFE MODAL ===== -->
+<div id="strafeModal" class="modal">
+  <div class="modal-content">
+    <input type="hidden" id="editStrafeId">
+    <div class="modal-header">Strafe erfassen</div>
+
+    <div class="modal-body">
+      <label>Spieler</label>
+      <select id="strafeMitglied"></select>
+
+      <label>Kategorie</label>
+      <select id="strafeKategorie"></select>
+
+      <label>Grund</label>
+      <select id="strafeGrund"></select>
+
+      <label>Datum</label>
+      <input type="date" id="strafeDatum">
+
+      <div id="minutenGroup" style="display: none;">
+        <label>Minuten</label>
+        <input type="number" id="strafeMinuten" value="0" min="0">
+      </div>
+
+      <label>Bezahlt?</label>
+      <select id="strafeBezahlt">
+        <option value="false">Nein</option>
+        <option value="true">Ja</option>
+      </select>
+
+      <div id="zahlungsartGroup">
+        <label>Zahlungsart</label>
+        <select id="strafeZahlungsart">
+          <option value="trainer">Trainer</option>
+          <option value="paypal">PayPal</option>
+          <option value="bar">Bar</option>
+        </select>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="strafeSperre">
+        <label for="strafeSperre">Sperre nächstes Spiel</label>
+      </div>
+
+      <label>Notizen (nur für Trainer/Betreuer sichtbar)</label>
+      <textarea id="strafeNotizen" placeholder="Notizen hinzufügen..." style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 15px; font-family: inherit; resize: vertical; min-height: 80px; box-sizing: border-box;" onfocus="this.style.borderColor='var(--yellow)'; this.style.boxShadow='0 0 0 3px rgba(255, 193, 7, 0.15)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
+
+      <div class="betrag-box">
+        Betrag: <span id="strafeBetrag">0.00</span> €
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary" onclick="saveStrafe()">💾 Speichern</button>
+      <button class="secondary" onclick="closeStrafeModal()">❌ Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GUTSCHRIFT MODAL ===== -->
+<div id="gutschriftModal" class="modal">
+  <div class="modal-content">
+    <input type="hidden" id="editGutschriftId">
+    <div class="modal-header">Guthaben/Vorauszahlung erfassen</div>
+
+    <div class="modal-body">
+      <label>Mitglied</label>
+      <select id="gutschriftMitglied"></select>
+
+      <label>Betrag (€)</label>
+      <input type="number" id="gutschriftBetrag" step="0.01" min="0" placeholder="z.B. 50,00">
+
+      <label>Zahlungsart</label>
+      <select id="gutschriftZahlungsart">
+        <option value="paypal">PayPal</option>
+        <option value="bar">Bar</option>
+        <option value="trainer">Trainer</option>
+      </select>
+
+      <label>Datum</label>
+      <input type="date" id="gutschriftDatum">
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary" onclick="saveGutschrift()">💾 Speichern</button>
+      <button class="secondary" onclick="closeGutschriftModal()">❌ Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ZAHLUNGSART MODAL ===== -->
+<div id="zahlungsartBezahltModal" class="modal">
+  <div class="modal-content">
+    <input type="hidden" id="strafeIdToBezahlt">
+    <div class="modal-header">Zahlungsart auswählen</div>
+
+    <div class="modal-body">
+      <label>Wie wurde die Strafe bezahlt?</label>
+      <select id="zahlungsartSelect">
+        <option value="">-- Bitte auswählen --</option>
+        <option value="trainer">Trainer</option>
+        <option value="paypal">PayPal</option>
+        <option value="bar">Bar</option>
+      </select>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="primary" onclick="confirmBezahltWithZahlungsart()">✓ Bestätigen</button>
+      <button class="secondary" onclick="closeBezahltModal()">❌ Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./js/app.js?v=20260119"></script>
+
+</body>
+</html>
