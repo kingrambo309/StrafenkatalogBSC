@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -8,9 +8,1261 @@
 <!-- Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<!-- Custom Styles -->
-<link rel="stylesheet" href="./css/style.css?v=20260119">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --blue: #003d82;
+  --blue-light: #e3f2fd;
+  --yellow: #FFE135;
+  --red: #c62828;
+  --gray: #f4f6f8;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #fffbf0;
+  margin: 0;
+}
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  padding: 16px 32px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  font-size: 15px;
+  z-index: 3000;
+  max-width: 90%;
+  width: fit-content;
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateX(-50%) translateY(-100px);
+    opacity: 0;
+  }
+}
+
+.toast.hide {
+  animation: slideUp 0.3s ease-in forwards;
+}
+
+.toast.success {
+  border-left: 5px solid #27ae60;
+  color: #27ae60;
+}
+
+.toast.error {
+  border-left: 5px solid var(--red);
+  color: var(--red);
+}
+
+.toast.info {
+  border-left: 5px solid var(--blue);
+  color: var(--blue);
+}
+
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(90deg, #003d82 0%, #005a9c 40%, #FFE135 100%);
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.logo-placeholder {
+  width: 70px;
+  height: 70px;
+  background: transparent;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  flex-shrink: 0;
+  color: var(--blue);
+  font-weight: bold;
+  overflow: hidden;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ===== NAV (SIDEBAR) ===== */
+nav {
+  background: linear-gradient(180deg, #003d82 0%, #005a9c 40%, #FFE135 100%);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: none;
+  align-items: stretch;
+  position: fixed;
+  top: 105px;
+  left: -300px;
+  width: 300px;
+  height: calc(100vh - 105px);
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: left 0.3s ease;
+}
+
+nav.active {
+  left: 0;
+}
+
+nav button {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 12px 20px;
+  border-radius: 0;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: left;
+  border-left: 4px solid transparent;
+}
+
+nav button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-left-color: var(--yellow);
+}
+
+nav button.nav-main {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-left: 5px solid var(--yellow);
+  color: #fff;
+  margin-bottom: 8px;
+  border-radius: 0 8px 8px 0;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+nav button.nav-main:hover {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.1) 100%);
+  color: #fff;
+  transform: translateX(4px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.nav-category {
+  margin-left: 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  padding: 12px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 225, 53, 0.35);
+  border-left: 4px solid var(--yellow);
+}
+
+nav button.nav-sub {
+  padding: 12px 20px 12px 40px;
+  font-size: 14px;
+  margin-left: 0;
+  border-left: 5px solid transparent;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+  border-radius: 0 6px 6px 0;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+nav button.nav-sub:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-left-color: var(--yellow);
+  color: #fff;
+  transform: translateX(6px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Hamburger Menu Button */
+.hamburger-btn {
+  display: flex;
+  background: var(--blue);
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  z-index: 1001;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  opacity: 0.8;
+}
+
+.hamburger-btn span {
+  width: 24px;
+  height: 3px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.hamburger-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(8px, -8px);
+}
+
+/* ===== TOOLTIP ===== */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 8px;
+  padding: 12px 15px;
+  position: absolute;
+  z-index: 2000;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -125px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.tooltip-container:hover .tooltip-text,
+.tooltip-container.show .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.note-icon {
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 8px;
+  user-select: none;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+  display: none;
+  background: #ffffff;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 1100px;
+  border-top: 5px solid var(--yellow);
+  border-left: 5px solid var(--blue);
+  box-shadow: 0 2px 8px rgba(0, 61, 130, 0.1);
+}
+
+.section.active {
+  display: block;
+}
+
+h2 {
+  margin-top: 0;
+  color: var(--blue);
+}
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background: #fff9c4;
+  color: var(--blue);
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+th:hover {
+  background: #ffe082;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.actions .edit { color: var(--yellow); font-weight: bold; font-size: 20px; }
+.actions .delete { color: var(--red); font-size: 20px; }
+.actions .bezahlt-btn { color: #27ae60; font-weight: bold; font-size: 18px; background: none; border: none; cursor: pointer; padding: 0; margin-right: 8px; transition: all 0.2s ease; }
+.actions .bezahlt-btn:hover { transform: scale(1.2); }
+
+/* ===== BUTTONS ===== */
+.primary {
+  background: linear-gradient(135deg, var(--blue) 0%, #005a9c 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 61, 130, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.primary:hover {
+  background: linear-gradient(135deg, #005a9c 0%, var(--blue) 100%);
+  box-shadow: 0 6px 20px rgba(0, 61, 130, 0.4);
+  transform: translateY(-3px);
+}
+
+.secondary {
+  background: #ccc;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal.active {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 10px;
+  max-height: calc(100vh - 80px);
+  border: 3px solid var(--blue);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header stays at top */
+.modal-header {
+  flex-shrink: 0;
+}
+
+/* Scrollable body */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0;
+}
+
+/* Buttons stay at bottom */
+.modal-buttons {
+  flex-shrink: 0;
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+}
+
+.modal-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 0;
+  padding: 16px 20px;
+  color: #fff;
+  background: var(--blue);
+  border-bottom: 3px solid var(--yellow);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* Unified padding in body */
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--blue);
+  letter-spacing: 0.3px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 0px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+}
+
+input[type="hidden"] {
+  display: none;
+}
+
+/* Checkbox layout */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.checkbox-row input[type="checkbox"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 2px solid #d0d0d0;
+  accent-color: var(--blue);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-row input[type="checkbox"]:focus {
+  border-color: var(--yellow);
+}
+
+.checkbox-row label {
+  margin: 0;
+  cursor: pointer;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.modal-buttons button {
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  letter-spacing: 0.3px;
+}
+
+.modal-buttons .primary {
+  background: linear-gradient(135deg, var(--blue) 0%, #005a9c 100%);
+  color: #fff;
+  margin: 0;
+  box-shadow: 0 4px 12px rgba(0, 61, 130, 0.25);
+  font-weight: 700;
+}
+
+.modal-buttons .primary:hover {
+  background: linear-gradient(135deg, #005a9c 0%, var(--blue) 100%);
+  box-shadow: 0 6px 16px rgba(0, 61, 130, 0.35);
+  transform: translateY(-2px);
+}
+
+.modal-buttons .secondary {
+  background: #e0e0e0;
+  color: var(--blue);
+  margin: 0;
+  font-weight: 700;
+  border: 2px solid transparent;
+}
+
+.modal-buttons .secondary:hover {
+  background: #d0d0d0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== STATUS ===== */
+.bezahlt { color: var(--blue); font-weight: bold; }
+.offen { color: var(--red); font-weight: bold; }
+.positive { color: #27ae60; font-weight: bold; }
+.negative { color: var(--red); font-weight: bold; }
+
+#zahlungsartGroup {
+  display: none;
+  margin-top: 16px;
+}
+
+.betrag-box {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+  text-align: right;
+}
+
+/* Mobile fullscreen modal */
+@media (max-width: 768px) {
+  /* Header anpassen */
+  header {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .logo-placeholder {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+  }
+
+  header h1 {
+    font-size: 18px !important;
+  }
+
+  /* Sidebar Navigation auf Mobile */
+  nav {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    left: -100%;
+    top: 0;
+    z-index: 999;
+    transition: left 0.3s ease;
+    background: linear-gradient(135deg, var(--blue) 0%, #005a9c 100%);
+    padding-top: 80px;
+  }
+
+  nav.active {
+    left: 0;
+  }
+
+  .hamburger-btn {
+    display: flex !important;
+    width: 44px;
+    height: 44px;
+  }
+
+  /* KPI Grid auf Mobile */
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    padding: 12px 8px;
+    gap: 6px;
+  }
+
+  .kpi-label {
+    font-size: 11px !important;
+  }
+
+  .kpi-value {
+    font-size: 32px !important;
+    font-weight: 800;
+  }
+
+  /* KPI Icons smaller */
+  .kpi-header img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  /* Section Padding */
+  .section {
+    padding: 12px !important;
+  }
+
+  .section h2 {
+    font-size: 18px !important;
+    margin: 8px 0 12px 0 !important;
+  }
+
+  /* Buttons auf Mobile */
+  .primary, .secondary {
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Tables responsive */
+  table {
+    font-size: 13px !important;
+  }
+
+  th, td {
+    padding: 8px 6px !important;
+  }
+
+  /* Forms */
+  label {
+    font-size: 14px !important;
+    margin-top: 12px !important;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
+    padding: 12px !important;
+  }
+
+  /* Modal fullscreen */
+  .modal-content {
+    width: 100% !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .modal {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+
+  .modal-header {
+    border-radius: 0 !important;
+    font-size: 16px !important;
+    padding: 16px !important;
+  }
+
+  .modal-body {
+    padding: 16px !important;
+  }
+
+  .modal-buttons {
+    border-radius: 0 !important;
+    gap: 8px !important;
+    padding: 16px !important;
+  }
+
+  .modal-buttons button {
+    height: 44px !important;
+    font-size: 14px !important;
+  }
+
+  /* Search container */
+  .search-container {
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .search-container input {
+    font-size: 16px !important;
+    padding: 10px 12px !important;
+    flex: 1 !important;
+  }
+
+  .search-container select {
+    font-size: 14px !important;
+    padding: 10px 8px !important;
+  }
+
+  /* Toast responsive */
+  .toast {
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    max-width: calc(100% - 32px) !important;
+  }
+
+  /* Ranking items */
+  .ranking-item {
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Dashboard card adjustments */
+  .dashboard-card {
+    padding: 16px !important;
+  }
+
+  .dashboard-card h3 {
+    font-size: 15px !important;
+    margin: 0 0 12px 0 !important;
+  }
+
+  /* Zahlungsübersicht Table */
+  #zahlungen table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+
+  #zahlungen th, #zahlungen td {
+    padding: 10px 4px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+  }
+
+  .modal {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .modal-header {
+    border-radius: 0;
+  }
+
+  .modal-buttons {
+    border-radius: 0;
+  }
+
+  /* Noch kleiner auf sehr kleinen Screens */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .kpi-label {
+    font-size: 10px !important;
+  }
+
+  .kpi-value {
+    font-size: 24px !important;
+  }
+
+  .kpi-header img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
+/* Alert modal always on top */
+#alertModal {
+  z-index: 2000 !important;
+}
+
+#alertModal .modal-content {
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+}
+
+/* Alert icon styling */
+.alert-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-top: 24px;
+  animation: alertPulse 0.5s ease-out;
+}
+
+@keyframes alertPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Error Alert styling */
+#alertModal.error .modal-header {
+  background: linear-gradient(135deg, var(--red) 0%, #b71c1c 100%);
+  border-bottom: none;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+#alertModal.error .modal-content {
+  box-shadow: 0 10px 40px rgba(198, 40, 40, 0.25);
+}
+
+#alertModal.error #alertMessage {
+  color: var(--blue);
+  font-weight: 500;
+}
+
+#alertModal.error .modal-buttons .primary {
+  background: linear-gradient(135deg, var(--red) 0%, #b71c1c 100%);
+  margin: 0;
+}
+
+#alertModal.error .modal-buttons .primary:hover {
+  box-shadow: 0 6px 20px rgba(198, 40, 40, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Success Alert styling */
+#alertModal.success .modal-header {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  border-bottom: none;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+#alertModal.success .modal-content {
+  box-shadow: 0 10px 40px rgba(39, 174, 96, 0.25);
+}
+
+#alertModal.success #alertMessage {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+#alertModal.success .modal-buttons .primary {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  margin: 0;
+  color: #fff;
+}
+
+#alertModal.success .modal-buttons .primary:hover {
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ===== SEARCH ===== */
+.search-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.search-container input {
+  flex: 1 1 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  min-width: 200px;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+}
+
+.search-container select {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--blue);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.search-container select:focus {
+  outline: none;
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+}
+
+.search-container button {
+  flex: 0 1 auto;
+  padding: 10px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--blue);
+  transition: all 0.3s ease;
+  font-weight: bold;
+  background: transparent;
+}
+
+.search-container button:hover {
+  border-color: var(--yellow);
+  background: rgba(255, 193, 7, 0.1);
+}
+
+/* ===== DASHBOARD ===== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.kpi-card {
+  background: linear-gradient(135deg, #fff 0%, #f5f7fa 100%);
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 10px 35px rgba(0, 61, 130, 0.12);
+  border: 1px solid rgba(255, 225, 53, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #FFE135 0%, #003d82 50%, #005a9c 100%);
+}
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  right: -50%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 225, 53, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.kpi-card:hover {
+  box-shadow: 0 20px 50px rgba(0, 61, 130, 0.2);
+  transform: translateY(-8px);
+  border-color: rgba(255, 225, 53, 0.4);
+}
+
+.kpi-card:hover .kpi-icon {
+  transform: scale(1.15) rotate(12deg);
+}
+
+.kpi-card.total {
+  background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+}
+
+.kpi-card.paid {
+  background: linear-gradient(135deg, #e8f5e9 0%, #fff 100%);
+}
+
+.kpi-card.open {
+  background: linear-gradient(135deg, #ffebee 0%, #fff 100%);
+}
+
+.kpi-card.members {
+  background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+}
+
+.kpi-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.kpi-icon {
+  font-size: 40px;
+  transition: transform 0.4s ease;
+  z-index: 1;
+}
+
+.kpi-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+  z-index: 1;
+}
+
+.kpi-value {
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--blue);
+  line-height: 1;
+  letter-spacing: -1px;
+  z-index: 1;
+}
+
+.kpi-card.paid .kpi-value {
+  color: #27ae60;
+}
+
+.kpi-card.open .kpi-value {
+  color: var(--red);
+}
+
+.kpi-card.members .kpi-value {
+  color: var(--blue);
+}
+
+.kpi-card.trainer {
+  background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+}
+
+.kpi-card.trainer .kpi-value {
+  color: var(--blue);
+}
+
+.kpi-card.betreuer {
+  background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+}
+
+.kpi-card.betreuer .kpi-value {
+  color: var(--blue);
+}
+
+.dashboard-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 61, 130, 0.1);
+  border-top: 5px solid var(--yellow);
+  border-left: 5px solid var(--blue);
+}
+
+.dashboard-card h3 {
+  margin: 0 0 16px 0;
+  color: var(--blue);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.ranking-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ranking-position {
+  font-weight: 700;
+  color: var(--yellow);
+  min-width: 28px;
+  font-size: 16px;
+}
+
+.ranking-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.ranking-value {
+  font-weight: 700;
+  color: var(--blue);
+  text-align: right;
+  min-width: 70px;
+}
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-name {
+  min-width: 150px;
+  font-size: 13px;
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.bar-container {
+  flex: 1;
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFE135 0%, #003d82 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+.bar-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  min-width: 40px;
+  text-align: right;
+}
+
+.frequency-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.frequency-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  border-left: 3px solid var(--yellow);
+}
+
+.frequency-name {
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.frequency-count {
+  color: var(--blue);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+</style>
 </head>
 
 <body>
@@ -479,7 +1731,1648 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./js/app.js?v=20260119"></script>
+
+<script>
+/* ===== Navigation ===== */
+function show(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  closeMenu();
+}
+
+function toggleMenu() {
+  const nav = document.querySelector("nav");
+  const hamburger = document.querySelector(".hamburger-btn");
+  
+  nav.classList.toggle("active");
+  hamburger.classList.toggle("active");
+}
+
+function closeMenu() {
+  const nav = document.querySelector("nav");
+  const hamburger = document.querySelector(".hamburger-btn");
+  
+  nav.classList.remove("active");
+  hamburger.classList.remove("active");
+}
+
+// Schließe Menu beim Klick auf Nav-Items
+document.addEventListener("click", function(event) {
+  const nav = document.querySelector("nav");
+  const hamburger = document.querySelector(".hamburger-btn");
+  const isNavButton = event.target.closest("nav button");
+  
+  // Schließe wenn außerhalb geklickt wird
+  if (!nav.contains(event.target) && !hamburger.contains(event.target) && nav.classList.contains("active")) {
+    closeMenu();
+  }
+  
+  // Schließe auch wenn auf Nav-Button geklickt wird
+  if (isNavButton && nav.classList.contains("active")) {
+    closeMenu();
+  }
+});
+
+/* ===== Custom Alert ===== */
+function showAlert(message, type = "error", title = null) {
+  const alertModal = document.getElementById("alertModal");
+  
+  // Default title basierend auf type
+  if (!title) {
+    if (type === "success") {
+      title = "✓ Erfolg";
+    } else if (type === "info") {
+      title = "ℹ️ Information";
+    } else {
+      title = "⚠️ Fehler";
+    }
+  }
+  
+  document.getElementById("alertTitle").textContent = title;
+  document.getElementById("alertMessage").textContent = message;
+  
+  // Alle Klassen entfernen
+  alertModal.classList.remove("error", "success");
+  
+  // Buttons zurücksetzen auf Standard (OK Button)
+  const buttonContainer = alertModal.querySelector(".modal-buttons");
+  buttonContainer.innerHTML = `
+    <button class="primary" onclick="closeAlert()" style="flex: 1;">OK</button>
+  `;
+  
+  // Neue Klasse hinzufügen
+  if (type === "success") {
+    alertModal.classList.add("success");
+  } else if (type === "error") {
+    alertModal.classList.add("error");
+  }
+  
+  alertModal.classList.add("active");
+}
+
+function closeAlert() {
+  document.getElementById("alertModal").classList.remove("active");
+}
+
+/* ===== Toast Notifications ===== */
+function showToast(message, type = "success", duration = 3000) {
+  // Entferne alte Toasts
+  const oldToast = document.querySelector(".toast");
+  if (oldToast) {
+    oldToast.remove();
+  }
+
+  // Erstelle neuen Toast
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // Auto-remove nach Duration
+  setTimeout(() => {
+    toast.classList.add("hide");
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+/* ===== Custom Confirm ===== */
+function showConfirm(message, title, onConfirm, onCancel) {
+  document.getElementById("alertTitle").textContent = title;
+  document.getElementById("alertMessage").textContent = message;
+  const alertModal = document.getElementById("alertModal");
+  
+  // Alle Klassen entfernen und error hinzufügen
+  alertModal.classList.remove("success");
+  alertModal.classList.add("error");
+  
+  // Buttons zurücksetzen und neu konfigurieren
+  const buttonContainer = alertModal.querySelector(".modal-buttons");
+  buttonContainer.innerHTML = `
+    <button class="primary" onclick="window.confirmCallback(true)" style="flex: 1;">Ja, löschen</button>
+    <button class="secondary" onclick="window.confirmCallback(false)" style="flex: 1;">Abbrechen</button>
+  `;
+  
+  // Callbacks speichern
+  window.confirmCallback = function(confirmed) {
+    closeAlert();
+    if (confirmed && onConfirm) onConfirm();
+    if (!confirmed && onCancel) onCancel();
+  };
+  
+  alertModal.classList.add("active");
+}
+
+/* ===== Supabase ===== */
+const sb = window.supabase.createClient(
+  "https://kglszxqlspnqkjokqqly.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbHN6eHFsc3BucWtqb2txcWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3MjQ1MzAsImV4cCI6MjA4NDMwMDUzMH0.y2L9yusv8mpe6tuVmuzGCMWqAERd0hy-IRdNLVn7jy8"
+);
+
+/* ===== SESSION MANAGEMENT ===== */
+let currentUser = null;
+let currentUserRole = null;
+
+async function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const errorDiv = document.getElementById("loginError");
+  
+  // Validierung
+  if (!email || !password) {
+    errorDiv.textContent = "Bitte E-Mail und Passwort eingeben";
+    errorDiv.style.display = "block";
+    return;
+  }
+  
+  try {
+    errorDiv.style.display = "none";
+    
+    // Authentifizierung mit Supabase
+    const { data, error: authError } = await sb.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+    
+    if (authError) {
+      errorDiv.textContent = "E-Mail oder Passwort falsch";
+      errorDiv.style.display = "block";
+      return;
+    }
+    
+    // Lade Mitgliederdaten
+    const { data: member, error: memberError } = await sb
+      .from("mitglieder")
+      .select("*")
+      .eq("id", data.user.id)
+      .single();
+
+    if (memberError || !member) {
+      errorDiv.textContent = "Benutzerdaten nicht gefunden";
+      errorDiv.style.display = "block";
+      return;
+    }
+
+    // Setze Session
+    currentUser = {
+      id: data.user.id,
+      email: data.user.email,
+      vorname: member.vorname,
+      nachname: member.nachname
+    };
+    currentUserRole = member.typ;
+
+    // Speichere Session in localStorage
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    localStorage.setItem("currentUserRole", currentUserRole);
+
+    // Schließe Login Modal
+    document.getElementById("loginModal").classList.remove("active");
+
+    // Starte die App
+    await loadApp();
+  } catch (err) {
+    console.error("Login Error:", err);
+    errorDiv.textContent = "Ein Fehler ist aufgetreten";
+    errorDiv.style.display = "block";
+  }
+}
+
+function logout() {
+  currentUser = null;
+  currentUserRole = null;
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("currentUserRole");
+  
+  // Verstecke Header und Nav
+  document.querySelector("header").style.display = "none";
+  document.querySelector("nav").style.display = "none";
+  
+  // Entferne Logout-Button
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) logoutBtn.remove();
+  
+  // Zeige Login Modal
+  document.getElementById("loginModal").classList.add("active");
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+}
+
+async function checkSession() {
+  // Versuche Session aus localStorage zu laden
+  const storedUser = localStorage.getItem("currentUser");
+  const storedRole = localStorage.getItem("currentUserRole");
+  
+  if (storedUser && storedRole) {
+    currentUser = JSON.parse(storedUser);
+    currentUserRole = storedRole;
+    
+    // Versuche zu verifizieren
+    const { data } = await sb.auth.getSession();
+    if (data.session) {
+      document.getElementById("loginModal").classList.remove("active");
+      await loadApp();
+      return;
+    }
+  }
+  
+  // Wenn keine Session, zeige Login
+  document.getElementById("loginModal").classList.add("active");
+}
+
+async function loadApp() {
+  // Zeige Header und Nav
+  document.querySelector("header").style.display = "flex";
+  document.querySelector("nav").style.display = "flex";
+  
+  // Aktiviere Dashboard-Sektion über show() Funktion
+  show('dashboard');
+  
+  // Lade Navigation mit Logout-Button
+  updateNavigation();
+  
+  // Lade Daten
+  await loadDashboard();
+  await ladeMitglieder();
+  await ladeRegeln();
+  await ladeStrafen();
+  await initStrafeForm();
+  await initGutschriftModal();
+  await ladeZahlungen();
+  await ladeGuthaben();
+}
+
+function updateNavigation() {
+  // Füge Logout-Button hinzu
+  const header = document.querySelector("header");
+  let logoutBtn = document.getElementById("logoutBtn");
+  
+  if (!logoutBtn) {
+    logoutBtn = document.createElement("button");
+    logoutBtn.id = "logoutBtn";
+    logoutBtn.className = "primary";
+    logoutBtn.style.marginLeft = "auto";
+    logoutBtn.style.fontSize = "14px";
+    logoutBtn.style.padding = "10px 16px";
+    logoutBtn.innerHTML = `<span id="userDisplayName"></span> | Abmelden`;
+    logoutBtn.onclick = logout;
+    header.appendChild(logoutBtn);
+  }
+  
+  document.getElementById("userDisplayName").textContent = `${currentUser.vorname}`;
+}
+
+
+/* ===== MITGLIEDER ===== */
+async function ladeMitglieder() {
+  const { data, error } = await sb
+    .from("mitglieder")
+    .select("*")
+    .order("nachname");
+
+  if (error) {
+    showAlert("Fehler beim Laden");
+    return;
+  }
+
+  mitgliederData = data || [];
+  renderMitgliederList();
+  
+  // Add sort listeners to table headers (only for member table)
+  const mitgliedersTable = document.getElementById('liste')?.closest('table');
+  if (mitgliedersTable) {
+    const headers = mitgliedersTable.querySelectorAll('thead th');
+    headers.forEach((th, idx) => {
+      if (idx < 3) { // Name, Typ, Trikot
+        const columns = ['name', 'typ', 'trikot'];
+        th.style.cursor = 'pointer';
+        th.onclick = () => sortTable(columns[idx]);
+      }
+    });
+  }
+}
+
+async function speichern() {
+  if (!vorname.value || !nachname.value) {
+    showAlert("Vor- und Nachname sind Pflicht");
+    return;
+  }
+
+  const vornameNormalized = vorname.value.trim().toLowerCase();
+  const nachnameNormalized = nachname.value.trim().toLowerCase();
+
+  // Prüfe auf Duplikate (außer wenn wir gerade ein Mitglied bearbeiten)
+  if (!editId.value) {
+    const { data: existingMembers } = await sb
+      .from("mitglieder")
+      .select("vorname, nachname");
+
+    const isDuplicate = existingMembers?.some(m => 
+      m.vorname.toLowerCase() === vornameNormalized && 
+      m.nachname.toLowerCase() === nachnameNormalized
+    );
+
+    if (isDuplicate) {
+      showAlert("Ein Mitglied mit diesem Namen existiert bereits");
+      return;
+    }
+  }
+
+  const payload = {
+    vorname: vorname.value.trim(),
+    nachname: nachname.value.trim(),
+    typ: typ.value,
+    trikotnummer: trikotnummer.value || null
+  };
+
+  let result;
+  if (editId.value) {
+    result = await sb.from("mitglieder").update(payload).eq("id", editId.value);
+  } else {
+    result = await sb.from("mitglieder").insert([payload]);
+  }
+
+  if (result.error) {
+    showAlert("Fehler beim Speichern: " + result.error.message);
+    return;
+  }
+
+  closeMitgliedModal();
+  ladeMitglieder();
+}
+
+async function bearbeiten(id) {
+  const { data } = await sb
+    .from("mitglieder")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  editId.value = data.id;
+  vorname.value = data.vorname;
+  nachname.value = data.nachname;
+  typ.value = data.typ;
+  trikotnummer.value = data.trikotnummer ?? "";
+  
+  document.getElementById("mitgliedModal").classList.add("active");
+}
+
+async function loeschen(id) {
+  showConfirm(
+    "Mitglied wirklich löschen?",
+    "Mitglied löschen",
+    async () => {
+      await sb.from("mitglieder").delete().eq("id", id);
+      ladeMitglieder();
+    }
+  );
+}
+
+function openMitgliedModal() {
+  editId.value = "";
+  vorname.value = "";
+  nachname.value = "";
+  trikotnummer.value = "";
+  typ.value = "spieler";
+  document.getElementById("mitgliedModal").classList.add("active");
+}
+
+function closeMitgliedModal() {
+  document.getElementById("mitgliedModal").classList.remove("active");
+}
+
+/* ===== STRAFENKATALOG ===== */
+let regelData = [];
+let regelSortConfig = { column: 'kategorie', direction: 'asc' };
+
+async function ladeRegeln() {
+  const { data, error } = await sb
+    .from("strafenkatalog")
+    .select("*")
+    .order("kategorie");
+
+  if (error) {
+    showAlert("Fehler beim Laden des Strafenkatalogs");
+    return;
+  }
+
+  regelData = data || [];
+  renderRegelList();
+  
+  // Add sort listeners to table headers
+  const regelTable = document.getElementById('regelnListe')?.closest('table');
+  if (regelTable) {
+    const headers = regelTable.querySelectorAll('thead th');
+    headers.forEach((th, idx) => {
+      if (idx < 5) { // Kategorie, Name, Grund, €/Min, Sperre
+        const columns = ['kategorie', 'name', 'grundbetrag', 'betrag_pro_minute', 'sperre'];
+        th.style.cursor = 'pointer';
+        th.onclick = () => sortRegelTable(columns[idx]);
+      }
+    });
+  }
+}
+
+function sortRegelTable(column) {
+  if (regelSortConfig.column === column) {
+    regelSortConfig.direction = regelSortConfig.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    regelSortConfig.column = column;
+    regelSortConfig.direction = 'asc';
+  }
+  
+  renderRegelList();
+}
+
+function renderRegelList() {
+  let displayData = [...regelData];
+  
+  // Sortieren
+  displayData.sort((a, b) => {
+    let aVal, bVal;
+    
+    switch(regelSortConfig.column) {
+      case 'kategorie':
+        aVal = a.kategorie.toLowerCase();
+        bVal = b.kategorie.toLowerCase();
+        break;
+      case 'name':
+        aVal = a.name.toLowerCase();
+        bVal = b.name.toLowerCase();
+        break;
+      case 'grundbetrag':
+        aVal = Number(a.grundbetrag);
+        bVal = Number(b.grundbetrag);
+        break;
+      case 'betrag_pro_minute':
+        aVal = Number(a.betrag_pro_minute);
+        bVal = Number(b.betrag_pro_minute);
+        break;
+      case 'sperre':
+        aVal = a.sperre_naechstes_spiel ? 1 : 0;
+        bVal = b.sperre_naechstes_spiel ? 1 : 0;
+        break;
+      default:
+        aVal = a.kategorie.toLowerCase();
+        bVal = b.kategorie.toLowerCase();
+    }
+    
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      if (aVal < bVal) return regelSortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return regelSortConfig.direction === 'asc' ? 1 : -1;
+    } else {
+      if (aVal < bVal) return regelSortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return regelSortConfig.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+  
+  // Filtern
+  const searchTerm = document.getElementById("regelSearch").value.toLowerCase();
+  const categoryFilter = document.getElementById("regelCategoryFilter").value;
+  
+  displayData = displayData.filter(r => {
+    const text = r.name.toLowerCase() + " " + r.kategorie.toLowerCase();
+    const matchesSearch = text.includes(searchTerm);
+    const matchesCategory = !categoryFilter || r.kategorie === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+  
+  // Rendern
+  regelnListe.innerHTML = "";
+  displayData.forEach(r => {
+    regelnListe.innerHTML += `
+      <tr>
+        <td>${r.kategorie === 'training' ? 'Training' : 'Spieltag'}</td>
+        <td>${r.name}</td>
+        <td>${(Number(r.grundbetrag)).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+        <td>${(Number(r.betrag_pro_minute)).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+        <td>${r.sperre_naechstes_spiel ? "✅" : "—"}</td>
+        <td class="actions">
+          <button class="edit" onclick="bearbeitenRegel('${r.id}')" title="Bearbeiten">✏️</button>
+          <button class="delete" onclick="loeschenRegel('${r.id}')" title="Löschen">🗑</button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  updateRegelSortIndicators();
+}
+
+function updateRegelSortIndicators() {
+  const regelTable = document.getElementById('regelnListe').closest('table');
+  if (!regelTable) return;
+  
+  regelTable.querySelectorAll('th').forEach(th => {
+    th.textContent = th.textContent.replace(' ↑', '').replace(' ↓', '');
+  });
+  
+  const headerMap = { 'kategorie': 0, 'name': 1, 'grundbetrag': 2, 'betrag_pro_minute': 3, 'sperre': 4 };
+  const headers = regelTable.querySelectorAll('thead th');
+  
+  if (headerMap[regelSortConfig.column] !== undefined) {
+    const header = headers[headerMap[regelSortConfig.column]];
+    const arrow = regelSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+    header.textContent += arrow;
+  }
+}
+
+function filterRegeln() {
+  renderRegelList();
+}
+
+function resetRegelFilter() {
+  document.getElementById("regelSearch").value = "";
+  document.getElementById("regelCategoryFilter").value = "";
+  renderRegelList();
+}
+
+async function speichernRegel() {
+  let finalRegelName = regelName.value;
+
+  // Wenn "Neu" ausgewählt wurde, nutze die manuelle Eingabe
+  if (regelName.value === "NEU") {
+    finalRegelName = neueBezeichnung.value.trim();
+    if (!finalRegelName) {
+      showAlert("Bitte eine Bezeichnung eingeben");
+      return;
+    }
+  } else if (!finalRegelName) {
+    showAlert("Bitte eine Bezeichnung auswählen");
+    return;
+  }
+
+  // Prüfe auf Duplikat bei neuer Regel (außer wenn wir gerade bearbeiten)
+  if (!regelId.value) {
+    const { data: existingRules } = await sb
+      .from("strafenkatalog")
+      .select("id")
+      .eq("kategorie", kategorie.value)
+      .ilike("name", finalRegelName);
+
+    if (existingRules && existingRules.length > 0) {
+      showAlert("Diese Regelbezeichnung existiert bereits in dieser Kategorie");
+      return;
+    }
+  }
+
+  const payload = {
+    kategorie: kategorie.value,
+    name: finalRegelName,
+    grundbetrag: Number(grundbetrag.value || 0),
+    betrag_pro_minute: Number(betragProMinute.value || 0),
+    sperre_naechstes_spiel: sperreNaechstesSpiel.checked
+  };
+
+  if (regelId.value) {
+    await sb.from("strafenkatalog").update(payload).eq("id", regelId.value);
+  } else {
+    await sb.from("strafenkatalog").insert([payload]);
+  }
+
+  closeRegelModal();
+  ladeRegeln();
+}
+
+async function bearbeitenRegel(id) {
+  const { data } = await sb
+    .from("strafenkatalog")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  regelId.value = data.id;
+  kategorie.value = data.kategorie;
+  regelName.value = data.name;
+  grundbetrag.value = data.grundbetrag;
+  betragProMinute.value = data.betrag_pro_minute;
+  sperreNaechstesSpiel.checked = data.sperre_naechstes_spiel;
+  
+  document.getElementById("regelModal").classList.add("active");
+}
+
+async function loeschenRegel(id) {
+  showConfirm(
+    "Regel wirklich löschen?",
+    "Regel löschen",
+    async () => {
+      await sb.from("strafenkatalog").delete().eq("id", id);
+      ladeRegeln();
+    }
+  );
+}
+
+function openRegelModal() {
+  regelId.value = "";
+  kategorie.value = "training";
+  regelName.value = "";
+  neueBezeichnung.value = "";
+  grundbetrag.value = "";
+  betragProMinute.value = "";
+  sperreNaechstesSpiel.checked = false;
+  document.getElementById("neueBezeichnungGroup").style.display = "none";
+  document.getElementById("regelModal").classList.add("active");
+}
+
+function closeRegelModal() {
+  document.getElementById("regelModal").classList.remove("active");
+}
+
+/* ===== STRAFEN ===== */
+let strafeData = [];
+let strafeSortConfig = { column: 'datum', direction: 'desc' };
+
+async function ladeStrafen() {
+  const { data, error } = await sb
+    .from("strafen")
+    .select(`
+      id,
+      datum,
+      minuten,
+      betrag,
+      bezahlt,
+      sperre_naechstes_spiel,
+      zahlungsart,
+      kategorie,
+      spieler_id,
+      katalog_id,
+      notizen,
+      mitglieder ( vorname, nachname ),
+      strafenkatalog ( name )
+    `)
+    .neq("strafenkatalog.name", "Guthaben")
+    .order("datum", { ascending: false });
+
+  if (error) {
+    showAlert("Fehler beim Laden der Strafen");
+    console.error(error);
+    return;
+  }
+
+  strafeData = data || [];
+  renderStrafeList();
+  
+  // Add sort listeners to table headers
+  const strafeTable = document.getElementById('strafenListe')?.closest('table');
+  if (strafeTable) {
+    const headers = strafeTable.querySelectorAll('thead th');
+    headers.forEach((th, idx) => {
+      if (idx < 8) { // Datum, Kategorie, Mitglied, Grund, Minuten, Betrag, Bezahlt, Sperre
+        const columns = ['datum', 'kategorie', 'mitglied', 'grund', 'minuten', 'betrag', 'bezahlt', 'sperre'];
+        th.style.cursor = 'pointer';
+        th.onclick = () => sortStrafeTable(columns[idx]);
+      }
+    });
+  }
+}
+
+function sortStrafeTable(column) {
+  if (strafeSortConfig.column === column) {
+    strafeSortConfig.direction = strafeSortConfig.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    strafeSortConfig.column = column;
+    strafeSortConfig.direction = 'asc';
+  }
+  
+  renderStrafeList();
+}
+
+function renderStrafeList() {
+  let displayData = [...strafeData];
+  
+  // Sortieren
+  displayData.sort((a, b) => {
+    let aVal, bVal;
+    
+    switch(strafeSortConfig.column) {
+      case 'datum':
+        aVal = new Date(a.datum).getTime();
+        bVal = new Date(b.datum).getTime();
+        break;
+      case 'kategorie':
+        aVal = a.kategorie.toLowerCase();
+        bVal = b.kategorie.toLowerCase();
+        break;
+      case 'mitglied':
+        aVal = `${a.mitglieder.vorname} ${a.mitglieder.nachname}`.toLowerCase();
+        bVal = `${b.mitglieder.vorname} ${b.mitglieder.nachname}`.toLowerCase();
+        break;
+      case 'grund':
+        aVal = a.strafenkatalog.name.toLowerCase();
+        bVal = b.strafenkatalog.name.toLowerCase();
+        break;
+      case 'minuten':
+        aVal = Number(a.minuten);
+        bVal = Number(b.minuten);
+        break;
+      case 'betrag':
+        aVal = Number(a.betrag);
+        bVal = Number(b.betrag);
+        break;
+      case 'bezahlt':
+        aVal = a.bezahlt ? 1 : 0;
+        bVal = b.bezahlt ? 1 : 0;
+        break;
+      case 'sperre':
+        aVal = a.sperre_naechstes_spiel ? 1 : 0;
+        bVal = b.sperre_naechstes_spiel ? 1 : 0;
+        break;
+      default:
+        aVal = new Date(a.datum).getTime();
+        bVal = new Date(b.datum).getTime();
+    }
+    
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      if (aVal < bVal) return strafeSortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return strafeSortConfig.direction === 'asc' ? 1 : -1;
+    } else {
+      if (aVal < bVal) return strafeSortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return strafeSortConfig.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+  
+  // Filtern
+  const searchTerm = document.getElementById("strafeSearch").value.toLowerCase();
+  const categoryFilter = document.getElementById("strafeCategoryFilter").value;
+  
+  displayData = displayData.filter(s => {
+    // Prüfe auf null strafenkatalog (falls Regel gelöscht wurde)
+    if (!s.strafenkatalog) return false;
+    
+    const text = `${s.mitglieder.vorname} ${s.mitglieder.nachname}`.toLowerCase() + " " + 
+                 s.strafenkatalog.name.toLowerCase() + " " + 
+                 s.kategorie.toLowerCase();
+    const matchesSearch = text.includes(searchTerm);
+    const matchesCategory = !categoryFilter || s.kategorie === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+  
+  // Rendern
+  strafenListe.innerHTML = "";
+  displayData.forEach(s => {
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}).split('/').reverse().join('.');
+    const notizIcon = s.notizen && s.notizen.trim() ? `<div class="tooltip-container" onclick="event.stopPropagation()"><span class="note-icon" title="Notiz vorhanden">💬</span><span class="tooltip-text">${s.notizen}</span></div>` : '';
+    strafenListe.innerHTML += `
+      <tr>
+        <td>${formatDate(s.datum)}</td>
+        <td>${s.kategorie === "spieltag" ? "Spieltag" : "Training"}</td>
+        <td>${s.mitglieder.vorname} ${s.mitglieder.nachname}</td>
+        <td>${s.strafenkatalog.name}</td>
+        <td>${s.minuten}</td>
+        <td>${(Number(s.betrag)).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+        <td class="${s.bezahlt ? 'bezahlt' : 'offen'}">${s.bezahlt ? "Ja (" + s.zahlungsart + ")" : "Nein"}</td>
+        <td>${s.sperre_naechstes_spiel ? "⚠️ Ja" : "—"}</td>
+        <td class="actions">
+          ${notizIcon}
+          ${!s.bezahlt ? `<button class="bezahlt-btn" onclick="markAsBezahlt('${s.id}')" title="Als bezahlt markieren">✓</button>` : ''}
+          <button class="edit" onclick="editStrafe('${s.id}')" title="Bearbeiten">✏️</button>
+          <button class="delete" onclick="deleteStrafe('${s.id}')" title="Löschen">🗑</button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  updateStrafeSortIndicators();
+}
+
+function updateStrafeSortIndicators() {
+  const strafeTable = document.getElementById('strafenListe').closest('table');
+  if (!strafeTable) return;
+  
+  strafeTable.querySelectorAll('th').forEach(th => {
+    th.textContent = th.textContent.replace(' ↑', '').replace(' ↓', '');
+  });
+  
+  const headerMap = { 'datum': 0, 'kategorie': 1, 'mitglied': 2, 'grund': 3, 'minuten': 4, 'betrag': 5, 'bezahlt': 6, 'sperre': 7 };
+  const headers = strafeTable.querySelectorAll('thead th');
+  
+  if (headerMap[strafeSortConfig.column] !== undefined) {
+    const header = headers[headerMap[strafeSortConfig.column]];
+    const arrow = strafeSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+    header.textContent += arrow;
+  }
+}
+
+function filterStrafen() {
+  renderStrafeList();
+}
+
+function resetStrafeFilter() {
+  document.getElementById("strafeSearch").value = "";
+  document.getElementById("strafeCategoryFilter").value = "";
+  renderStrafeList();
+}
+
+async function deleteStrafe(id) {
+  showConfirm(
+    "Strafe wirklich löschen?",
+    "Strafe löschen",
+    async () => {
+      await sb.from("strafen").delete().eq("id", id);
+      loadDashboard();
+      ladeStrafen();
+      ladeZahlungen();
+    }
+  );
+}
+
+async function markAsBezahlt(id) {
+  document.getElementById("strafeIdToBezahlt").value = id;
+  document.getElementById("zahlungsartSelect").value = "";
+  document.getElementById("zahlungsartBezahltModal").classList.add("active");
+}
+
+function closeBezahltModal() {
+  document.getElementById("zahlungsartBezahltModal").classList.remove("active");
+  document.getElementById("strafeIdToBezahlt").value = "";
+  document.getElementById("zahlungsartSelect").value = "";
+}
+
+async function confirmBezahltWithZahlungsart() {
+  const strafeId = document.getElementById("strafeIdToBezahlt").value;
+  const zahlungsart = document.getElementById("zahlungsartSelect").value;
+
+  if (!zahlungsart) {
+    showAlert("Bitte eine Zahlungsart auswählen");
+    return;
+  }
+
+  try {
+    // Strafe als bezahlt markieren
+    const { error: updateError } = await sb
+      .from("strafen")
+      .update({ 
+        bezahlt: true, 
+        zahlungsart: zahlungsart 
+      })
+      .eq("id", strafeId);
+
+    if (updateError) {
+      console.error("Update Error:", updateError);
+      showAlert("Fehler beim Markieren als bezahlt: " + updateError.message);
+      return;
+    }
+
+    // Hole die Strafedaten für Guthaben-Update
+    const { data: strafeData, error: strafeError } = await sb
+      .from("strafen")
+      .select("spieler_id, betrag")
+      .eq("id", strafeId)
+      .single();
+
+    if (strafeError) {
+      console.error("Strafe Error:", strafeError);
+      showAlert("Fehler beim Laden der Strafe");
+      return;
+    }
+
+    // Guthaben reduzieren
+    if (strafeData?.spieler_id) {
+      const { data: guthabenData } = await sb
+        .from("guthaben")
+        .select("*")
+        .eq("spieler_id", strafeData.spieler_id)
+        .single();
+
+      if (guthabenData) {
+        await sb
+          .from("guthaben")
+          .update({ guthaben_betrag: Math.max(0, guthabenData.guthaben_betrag - strafeData.betrag) })
+          .eq("id", guthabenData.id);
+      }
+    }
+
+    loadDashboard();
+    ladeStrafen();
+    ladeZahlungen();
+    closeBezahltModal();
+    showToast("Strafe erfolgreich als bezahlt markiert", "success");
+  } catch (error) {
+    console.error("Error in confirmBezahltWithZahlungsart:", error);
+    showAlert("Ein Fehler ist aufgetreten: " + error.message);
+  }
+}
+
+async function editStrafe(id) {
+  const { data, error } = await sb
+    .from("strafen")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    showAlert("Fehler beim Laden der Strafe");
+    return;
+  }
+
+  editStrafeId.value = data.id;
+  strafeMitglied.value = data.spieler_id;
+  strafeGrund.value = data.katalog_id;
+  strafeKategorie.value = data.kategorie;
+  strafeDatum.value = data.datum;
+  strafeMinuten.value = data.minuten;
+  strafeBezahlt.value = String(data.bezahlt);
+  strafeZahlungsart.value = data.zahlungsart ?? "";
+  strafeSperre.checked = data.sperre_naechstes_spiel === true;
+  strafeNotizen.value = data.notizen ?? "";
+
+  const regel = strafenkatalogCache.find(r => r.id === data.katalog_id);
+  if (regel) {
+    strafeKategorie.value = regel.kategorie;
+  }
+
+  berechneBetrag();
+  openStrafeForm();
+}
+
+function heuteISO() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function openStrafeForm() {
+  // Nur bei neuer Strafe (nicht beim Bearbeiten)
+  if (!editStrafeId.value) {
+    strafeDatum.value = heuteISO();
+    strafeNotizen.value = "";
+    strafeBezahlt.value = "false";
+    strafeZahlungsart.value = "trainer";
+    strafeSperre.checked = false;
+    strafeMinuten.value = "0";
+  }
+
+  document.getElementById("strafeModal").classList.add("active");
+}
+
+function closeStrafeModal() {
+  editStrafeId.value = "";
+  // Form zurücksetzen
+  strafeMitglied.value = "";
+  strafeKategorie.value = "training";
+  strafeGrund.value = "";
+  strafeDatum.value = heuteISO();
+  strafeMinuten.value = "0";
+  strafeBezahlt.value = "false";
+  strafeZahlungsart.value = "trainer";
+  strafeSperre.checked = false;
+  strafeNotizen.value = "";
+  document.getElementById("zahlungsartGroup").style.display = "none";
+  document.getElementById("minutenGroup").style.display = "none";
+  document.getElementById("strafeModal").classList.remove("active");
+}
+
+let strafenkatalogCache = [];
+
+async function initStrafeForm() {
+  const { data: mitglieder } = await sb
+    .from("mitglieder")
+    .select("*")
+    .eq("typ", "spieler")
+    .order("vorname", { ascending: true });
+
+  const select = document.getElementById("strafeMitglied");
+  select.innerHTML = '<option value="">-- Bitte auswählen --</option>';
+  (mitglieder || []).forEach(m => {
+    const option = document.createElement("option");
+    option.value = m.id;
+    option.textContent = `${m.vorname} ${m.nachname}`;
+    select.appendChild(option);
+  });
+
+  const { data: katalog } = await sb
+    .from("strafenkatalog")
+    .select("*")
+    .order("kategorie", { ascending: true })
+    .order("name", { ascending: true });
+
+  strafenkatalogCache = katalog || [];
+
+  // Kategorien laden
+  const kategorien = [...new Set(katalog.map(r => r.kategorie))];
+  strafeKategorie.innerHTML = kategorien
+    .map(k => `<option value="${k}">${k === 'training' ? 'Training' : 'Spieltag'}</option>`)
+    .join("");
+
+  // Kategorie Handler
+  document.getElementById("strafeKategorie").addEventListener("change", updateStrafeGrundDropdown);
+  updateStrafeGrundDropdown();
+
+  // Grund Handler - zeige/verstecke Minuten basierend auf euro_pro_minute
+  document.getElementById("strafeGrund").addEventListener("change", () => {
+    const grundId = document.getElementById("strafeGrund").value;
+    const grund = strafenkatalogCache.find(k => k.id === grundId);
+    const minutenGroup = document.getElementById("minutenGroup");
+    
+    // Zeige Minuten wenn euro_pro_minute > 0
+    if (grund && Number(grund.euro_pro_minute) > 0) {
+      minutenGroup.style.display = "block";
+    } else {
+      minutenGroup.style.display = "none";
+      document.getElementById("strafeMinuten").value = "0";
+    }
+    
+    berechneBetrag();
+  });
+}
+
+function ladeGruende() {
+  const kategorie = strafeKategorie.value;
+
+  strafeGrund.innerHTML = strafenkatalogCache
+    .filter(r => r.kategorie === kategorie)
+    .map(r => `<option value="${r.id}">${r.name}</option>`)
+    .join("");
+
+  berechneBetrag();
+}
+
+// Alias für updateStrafeGrundDropdown
+const updateStrafeGrundDropdown = ladeGruende;
+
+function berechneBetrag() {
+  const regel = strafenkatalogCache.find(r => r.id === strafeGrund.value);
+  if (!regel) return;
+
+  const minuten = Number(strafeMinuten.value || 0);
+  const betrag = Number(regel.grundbetrag) + (Number(regel.betrag_pro_minute) * minuten);
+  strafeBetrag.textContent = betrag.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  return betrag;
+}
+
+// Handler für Minutenfeld-Änderungen
+strafeMinuten?.addEventListener("input", berechneBetrag);
+
+// Handler für Bezahlt-Status
+strafeBezahlt.addEventListener("change", function() {
+  document.getElementById("zahlungsartGroup").style.display = this.value === "true" ? "block" : "none";
+});
+
+async function saveStrafe() {
+  if (!strafeDatum.value) {
+    showAlert("Bitte Datum auswählen");
+    return;
+  }
+
+  if (!strafeMitglied.value) {
+    showAlert("Bitte ein Mitglied auswählen");
+    return;
+  }
+
+  if (!strafeGrund.value) {
+    showAlert("Bitte einen Grund auswählen");
+    return;
+  }
+
+  // Prüfe auf Duplikat bei neuer Strafe (Spieler + Grund + Datum muss eindeutig sein)
+  if (!editStrafeId.value) {
+    const { data: existingPenalties, error: checkError } = await sb
+      .from("strafen")
+      .select("id")
+      .eq("spieler_id", strafeMitglied.value)
+      .eq("katalog_id", strafeGrund.value)
+      .eq("datum", strafeDatum.value);
+
+    if (checkError) {
+      console.error("Fehler bei Duplikat-Prüfung:", checkError);
+      showAlert("Fehler bei der Überprüfung: " + checkError.message);
+      return;
+    }
+
+    console.log("Duplikat-Check - Spieler:", strafeMitglied.value, "Grund:", strafeGrund.value, "Datum:", strafeDatum.value, "Gefunden:", existingPenalties);
+
+    if (existingPenalties && existingPenalties.length > 0) {
+      showAlert("Diese Strafe existiert bereits für diesen Spieler an diesem Datum");
+      return;
+    }
+  }
+
+  const payload = {
+    spieler_id: strafeMitglied.value,
+    katalog_id: strafeGrund.value,
+    kategorie: strafeKategorie.value,
+    datum: strafeDatum.value,
+    minuten: Number(strafeMinuten.value),
+    betrag: berechneBetrag(),
+    bezahlt: strafeBezahlt.value === "true",
+    zahlungsart: strafeZahlungsart.value || null,
+    sperre_naechstes_spiel: strafeSperre.checked,
+    notizen: strafeNotizen.value || null
+  };
+
+  let result;
+  if (editStrafeId.value) {
+    result = await sb.from("strafen")
+      .update(payload)
+      .eq("id", editStrafeId.value);
+  } else {
+    result = await sb.from("strafen").insert([payload]);
+  }
+
+  if (result.error) {
+    showAlert("Fehler beim Speichern: " + result.error.message);
+    return;
+  }
+
+  closeStrafeModal();
+  loadDashboard();
+  ladeStrafen();
+  ladeZahlungen();
+  
+  // Unterschiedliche Meldung für Neu vs. Bearbeitung
+  if (editStrafeId.value) {
+    showToast("Strafe erfolgreich aktualisiert", "success");
+  } else {
+    showToast("Strafe erfolgreich erfasst", "success");
+  }
+}
+
+/* ===== DASHBOARD ===== */
+async function loadDashboard() {
+  // Lade alle Strafen
+  const { data: strafen, error: strafeError } = await sb
+    .from("strafen")
+    .select(`
+      betrag,
+      bezahlt,
+      spieler_id,
+      mitglieder ( vorname, nachname ),
+      strafenkatalog ( name )
+    `);
+
+  if (strafeError) {
+    showAlert("Fehler beim Laden des Dashboards");
+    console.error(strafeError);
+    return;
+  }
+
+  // Lade alle Mitglieder (für Gesamtzahl und Typen)
+  const { data: members, error: memberError } = await sb
+    .from("mitglieder")
+    .select("id, typ");
+
+  if (memberError) {
+    console.error(memberError);
+  }
+
+  // 1. KPIs berechnen
+  const totalBetrag = strafen.reduce((sum, s) => sum + Number(s.betrag), 0);
+  const paidBetrag = strafen.filter(s => s.bezahlt).reduce((sum, s) => sum + Number(s.betrag), 0);
+  const openBetrag = totalBetrag - paidBetrag;
+
+  // Alle Spieler aus der Mannschaft zählen
+  const totalMembers = members ? members.length : 0;
+  const trainerCount = members ? members.filter(m => m.typ === 'trainer').length : 0;
+  const betreueerCount = members ? members.filter(m => m.typ === 'betreuer').length : 0;
+
+  // Update KPI Cards
+  document.getElementById("kpiTotal").textContent = totalBetrag.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+  document.getElementById("kpiPaid").textContent = paidBetrag.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+  document.getElementById("kpiOpen").textContent = openBetrag.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+  document.getElementById("kpiMembers").textContent = totalMembers;
+  document.getElementById("kpiTrainer").textContent = trainerCount;
+  document.getElementById("kpiBetreuer").textContent = betreueerCount;
+
+  // 2. Top 5 Meiste Strafen (Summe pro Spieler)
+  // Summiere alle Strafen pro Spieler
+  const playerSums = {};
+  strafen.forEach(s => {
+    const name = `${s.mitglieder.vorname} ${s.mitglieder.nachname}`;
+    playerSums[name] = (playerSums[name] || 0) + Number(s.betrag);
+  });
+
+  // Lade alle Mitgliederdaten für die vollständige Liste
+  const { data: allMembers } = await sb.from("mitglieder").select("id, vorname, nachname");
+  
+  // Erstelle eine komplette playerSums Map mit allen Spielern
+  const completePlayerSums = {};
+  allMembers.forEach(m => {
+    const name = `${m.vorname} ${m.nachname}`;
+    completePlayerSums[name] = playerSums[name] || 0;
+  });
+
+  // Top Most: Nur Spieler mit Strafen (> 0 €)
+  const topMost = Object.entries(completePlayerSums)
+    .filter(([name, amount]) => amount > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  // Top Least: Alle Spieler, auch mit 0 € (um die besten zu zeigen)
+  const topLeast = Object.entries(completePlayerSums)
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, 5);
+
+  // Render Top Most
+  const maxTop = topMost.length > 0 ? topMost[0][1] : 0;
+  document.getElementById("topMostChart").innerHTML = topMost.map((item, idx) => `
+    <div class="bar-item">
+      <div class="bar-name">${idx + 1}. ${item[0]}</div>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: ${maxTop > 0 ? (item[1] / maxTop * 100) : 0}%">
+          <div class="bar-value">${item[1].toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Render Top Least
+  const maxLeast = topLeast.length > 0 ? topLeast[topLeast.length - 1][1] : 0;
+  document.getElementById("topLeastChart").innerHTML = topLeast.map((item, idx) => `
+    <div class="bar-item">
+      <div class="bar-name">${idx + 1}. ${item[0]}</div>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: ${maxLeast > 0 ? (item[1] / maxLeast * 100) : 0}%">
+          <div class="bar-value">${item[1].toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // 3. Häufigste Strafarten
+  const frequencies = {};
+  strafen.forEach(s => {
+    frequencies[s.strafenkatalog.name] = (frequencies[s.strafenkatalog.name] || 0) + 1;
+  });
+
+  const topFrequencies = Object.entries(frequencies)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+
+  document.getElementById("frequencyList").innerHTML = topFrequencies.map(item => `
+    <div class="frequency-item">
+      <div class="frequency-name">${item[0]}</div>
+      <div class="frequency-count">${item[1]}x</div>
+    </div>
+  `).join('');
+}
+async function ladeZahlungen() {
+  // Lade Strafen
+  const { data: strafen, error: strafeError } = await sb
+    .from("strafen")
+    .select(`
+      betrag,
+      bezahlt,
+      spieler_id,
+      mitglieder ( vorname, nachname )
+    `);
+
+  // Lade Guthaben aus guthaben-Tabelle
+  const { data: guthaben, error: guthabenError } = await sb
+    .from("guthaben")
+    .select(`
+      betrag,
+      mitglied_id,
+      mitglieder ( vorname, nachname )
+    `);
+
+  if (strafeError || guthabenError) {
+    showAlert("Fehler beim Laden der Zahlungsübersicht");
+    console.error(strafeError, guthabenError);
+    return;
+  }
+
+  const summary = {};
+
+  // Verarbeite Strafen
+  (strafen || []).forEach(s => {
+    const name = `${s.mitglieder.vorname} ${s.mitglieder.nachname}`;
+
+    if (!summary[name]) {
+      summary[name] = { gezahlt: 0, offen: 0 };
+    }
+
+    if (s.bezahlt) {
+      summary[name].gezahlt += Number(s.betrag);
+    } else {
+      summary[name].offen += Number(s.betrag);
+    }
+  });
+
+  // Verarbeite Guthaben (addiere zu gezahlt)
+  (guthaben || []).forEach(g => {
+    const name = `${g.mitglieder.vorname} ${g.mitglieder.nachname}`;
+
+    if (!summary[name]) {
+      summary[name] = { gezahlt: 0, offen: 0 };
+    }
+
+    summary[name].gezahlt += Number(g.betrag);
+  });
+
+  zahlungsListe.innerHTML = "";
+
+  Object.entries(summary).forEach(([name, v]) => {
+    const gesamt = v.gezahlt - v.offen;
+    const gesamtClass = gesamt >= 0 ? 'positive' : 'negative';
+
+    zahlungsListe.innerHTML += `
+      <tr>
+        <td>${name}</td>
+        <td>${(v.gezahlt).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+        <td class="negative">-${(v.offen).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+        <td class="${gesamtClass}">${(gesamt).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+      </tr>
+    `;
+  });
+}
+
+/* ===== GUTSCHRIFT/VORAUSZAHLUNG ===== */
+let gutschriftKatalogId = null; // ID für den Guthaben-Eintrag im Katalog
+
+async function initGutschriftModal() {
+  // Lade Mitglieder
+  const { data: mitglieder } = await sb
+    .from("mitglieder")
+    .select("id, vorname, nachname")
+    .order("nachname");
+
+  const gutschriftMitgliedSelect = document.getElementById("gutschriftMitglied");
+  gutschriftMitgliedSelect.innerHTML = mitglieder
+    .map(m => `<option value="${m.id}">${m.vorname} ${m.nachname}</option>`)
+    .join("");
+}
+
+function openGutschriftModal() {
+  document.getElementById("editGutschriftId").value = "";
+  document.getElementById("gutschriftBetrag").value = "";
+  document.getElementById("gutschriftZahlungsart").value = "paypal";
+  document.getElementById("gutschriftDatum").value = heuteISO();
+  document.getElementById("gutschriftModal").classList.add("active");
+}
+
+function closeGutschriftModal() {
+  document.getElementById("gutschriftModal").classList.remove("active");
+}
+
+async function saveGutschrift() {
+  const mitgliedId = document.getElementById("gutschriftMitglied").value;
+  const betrag = Number(document.getElementById("gutschriftBetrag").value);
+  const zahlungsart = document.getElementById("gutschriftZahlungsart").value;
+  const datum = document.getElementById("gutschriftDatum").value;
+
+  if (!mitgliedId) {
+    showAlert("Bitte ein Mitglied auswählen", "Eingabe erforderlich", "info");
+    return;
+  }
+
+  if (betrag <= 0 || isNaN(betrag)) {
+    showAlert("Bitte einen gültigen Betrag eingeben (größer als 0)", "Ungültige Eingabe", "info");
+    return;
+  }
+
+  if (!datum) {
+    showAlert("Bitte ein Datum auswählen", "Eingabe erforderlich", "info");
+    return;
+  }
+
+  const payload = {
+    mitglied_id: mitgliedId,
+    datum: datum,
+    betrag: betrag,
+    zahlungsart: zahlungsart,
+    notizen: "Guthaben/Vorauszahlung"
+  };
+
+  const { error } = await sb.from("guthaben").insert([payload]);
+
+  if (error) {
+    showAlert("Datenbankfehler: " + error.message, "Fehler beim Speichern", "error");
+    return;
+  }
+
+  closeGutschriftModal();
+  loadDashboard();
+  ladeZahlungen();
+  ladeStrafen();
+  ladeGuthaben();
+  showToast("Guthaben erfolgreich erfasst", "success");
+}
+
+/* ===== GUTHABEN SEITE ===== */
+async function ladeGuthaben() {
+  const { data, error } = await sb
+    .from("guthaben")
+    .select(`
+      id,
+      datum,
+      betrag,
+      zahlungsart,
+      mitglied_id,
+      mitglieder ( vorname, nachname )
+    `)
+    .order("datum", { ascending: false });
+
+  if (error) {
+    showAlert("Fehler beim Laden der Guthaben");
+    console.error(error);
+    return;
+  }
+
+  const guthabenData = data || [];
+  guthabenListe.innerHTML = "";
+
+  if (guthabenData.length === 0) {
+    guthabenListe.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align: center; color: #999;">Keine Guthaben eingetragen</td>
+      </tr>
+    `;
+    return;
+  }
+
+  guthabenData.forEach(g => {
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}).split('/').reverse().join('.');
+    guthabenListe.innerHTML += `
+      <tr>
+        <td>${formatDate(g.datum)}</td>
+        <td>${g.mitglieder.vorname} ${g.mitglieder.nachname}</td>
+        <td>${(Number(g.betrag)).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</td>
+        <td>${g.zahlungsart || '-'}</td>
+        <td class="actions">
+          <button class="delete" onclick="deleteGuthaben('${g.id}')" title="Löschen">🗑</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function deleteGuthaben(id) {
+  showConfirm(
+    "Guthaben-Eintrag wirklich löschen?",
+    "Guthaben löschen",
+    async () => {
+      await sb.from("guthaben").delete().eq("id", id);
+      loadDashboard();
+      ladeGuthaben();
+      ladeZahlungen();
+    }
+  );
+}
+
+/* ===== INIT ===== */
+document.addEventListener("DOMContentLoaded", async () => {
+  await checkSession();
+});
+
+/* ===== MODAL UX ===== */
+/* Close modal with ESC key */
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".modal.active").forEach(m => {
+      m.classList.remove("active");
+    });
+  }
+});
+
+/* Close modal by clicking outside */
+document.querySelectorAll(".modal").forEach(modal => {
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal) {
+      modal.classList.remove("active");
+    }
+  });
+});
+
+/* Regel-Bezeichnung: "Neu" Option Handler */
+if (document.getElementById("regelName")) {
+  document.getElementById("regelName").addEventListener("change", function() {
+    const neueBezeichnungGroup = document.getElementById("neueBezeichnungGroup");
+    if (this.value === "NEU") {
+      neueBezeichnungGroup.style.display = "block";
+      document.getElementById("neueBezeichnung").focus();
+    } else {
+      neueBezeichnungGroup.style.display = "none";
+    }
+  });
+}
+
+/* ===== MITGLIED FILTER ===== */
+let mitgliederData = [];
+let sortConfig = { column: 'name', direction: 'asc' };
+
+function sortTable(column) {
+  if (sortConfig.column === column) {
+    sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortConfig.column = column;
+    sortConfig.direction = 'asc';
+  }
+  
+  renderMitgliederList();
+}
+
+function renderMitgliederList() {
+  let displayData = [...mitgliederData];
+  
+  // Sortieren
+  displayData.sort((a, b) => {
+    let aVal, bVal;
+    
+    switch(sortConfig.column) {
+      case 'name':
+        aVal = `${a.vorname} ${a.nachname}`.toLowerCase();
+        bVal = `${b.vorname} ${b.nachname}`.toLowerCase();
+        break;
+      case 'typ':
+        aVal = a.typ.toLowerCase();
+        bVal = b.typ.toLowerCase();
+        break;
+      case 'trikot':
+        aVal = a.trikotnummer || 0;
+        bVal = b.trikotnummer || 0;
+        break;
+      default:
+        aVal = a.nachname.toLowerCase();
+        bVal = b.nachname.toLowerCase();
+    }
+    
+    if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+  
+  // Filtern
+  const searchTerm = document.getElementById("mitgliedSearch").value.toLowerCase();
+  const typeFilter = document.getElementById("mitgliedTypeFilter").value;
+  
+  displayData = displayData.filter(m => {
+    const text = `${m.vorname} ${m.nachname}`.toLowerCase() + " " + m.typ.toLowerCase() + " " + (m.trikotnummer || "");
+    const matchesSearch = text.includes(searchTerm);
+    const matchesType = !typeFilter || m.typ === typeFilter;
+    return matchesSearch && matchesType;
+  });
+  
+  // Rendern
+  liste.innerHTML = "";
+  displayData.forEach(m => {
+    const typIcon = m.typ === 'spieler' ? 'fa-futbol' : m.typ === 'trainer' ? 'fa-person-chalkboard' : 'fa-people-group';
+    const typLabel = m.typ.charAt(0).toUpperCase() + m.typ.slice(1);
+    liste.innerHTML += `
+      <tr>
+        <td>${m.vorname} ${m.nachname}</td>
+        <td><i class="fa-solid ${typIcon}" style="color:#ffc107;margin-right:8px;width:20px;text-align:center;"></i>${typLabel}</td>
+        <td>${m.trikotnummer ?? "-"}</td>
+        <td class="actions">
+          <button class="edit" onclick="bearbeiten('${m.id}')" title="Bearbeiten">✏️</button>
+          <button class="delete" onclick="loeschen('${m.id}')" title="Löschen">🗑</button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  updateSortIndicators();
+}
+
+function updateSortIndicators() {
+  const mitgliedersTable = document.getElementById('liste').closest('table');
+  if (!mitgliedersTable) return;
+  
+  mitgliedersTable.querySelectorAll('th').forEach(th => {
+    th.textContent = th.textContent.replace(' ↑', '').replace(' ↓', '');
+  });
+  
+  const headerMap = { 'name': 0, 'typ': 1, 'trikot': 2 };
+  const headers = mitgliedersTable.querySelectorAll('thead th');
+  
+  if (headerMap[sortConfig.column] !== undefined) {
+    const header = headers[headerMap[sortConfig.column]];
+    const arrow = sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+    header.textContent += arrow;
+  }
+}
+
+function filterMitglieder() {
+  renderMitgliederList();
+}
+
+function resetMitgliedFilter() {
+  document.getElementById("mitgliedSearch").value = "";
+  document.getElementById("mitgliedTypeFilter").value = "";
+  renderMitgliederList();
+}
+
+if (document.getElementById("mitgliedSearch")) {
+  document.getElementById("mitgliedSearch").addEventListener("input", filterMitglieder);
+}
+
+if (document.getElementById("mitgliedTypeFilter")) {
+  document.getElementById("mitgliedTypeFilter").addEventListener("change", filterMitglieder);
+}
+
+if (document.getElementById("regelSearch")) {
+  document.getElementById("regelSearch").addEventListener("input", filterRegeln);
+}
+
+if (document.getElementById("regelCategoryFilter")) {
+  document.getElementById("regelCategoryFilter").addEventListener("change", filterRegeln);
+}
+
+if (document.getElementById("strafeSearch")) {
+  document.getElementById("strafeSearch").addEventListener("input", filterStrafen);
+}
+
+if (document.getElementById("strafeCategoryFilter")) {
+  document.getElementById("strafeCategoryFilter").addEventListener("change", filterStrafen);
+}
+</script>
 
 </body>
 </html>
