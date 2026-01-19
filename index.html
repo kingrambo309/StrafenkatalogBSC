@@ -1168,6 +1168,18 @@ input[type="hidden"] {
   background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
 }
 
+.kpi-card.guthaben {
+  background: linear-gradient(135deg, #f3e5f5 0%, #fff 100%);
+}
+
+.kpi-card.cash {
+  background: linear-gradient(135deg, #f3e5f5 0%, #fff 100%);
+}
+
+.kpi-card.paypal {
+  background: linear-gradient(135deg, #fce4ec 0%, #fff 100%);
+}
+
 .kpi-header {
   display: flex;
   align-items: center;
@@ -1588,6 +1600,7 @@ input[type="hidden"] {
   <div class="nav-category">📊 VERWALTUNG</div>
   <button onclick="show('mannschaft')" class="nav-sub">⚽ Mannschaft</button>
   <button onclick="show('katalog')" class="nav-sub">📋 Strafenkatalog</button>
+  <button onclick="show('kassenstand')" class="nav-sub">💰 Kassenstand</button>
 </nav>
 
 <!-- ===== DASHBOARD ===== -->
@@ -1728,6 +1741,102 @@ input[type="hidden"] {
     </thead>
     <tbody id="regelnListe"></tbody>
   </table>
+</div>
+
+<!-- ===== KASSENSTAND ===== -->
+<div id="kassenstand" class="section">
+  <h2>Kassenstand</h2>
+  
+  <!-- Strafen & Zahlungen KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card total">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Strafen Gesamt</div>
+          <div class="kpi-value" id="kpiKassenStrafenGesamt">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/strafen.png" alt="Strafen" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card paid">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Bezahlte Strafen</div>
+          <div class="kpi-value" id="kpiKassenBezahlt">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/geld.png" alt="Bezahlt" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card guthaben">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Guthaben Gesamt</div>
+          <div class="kpi-value" id="kpiKassenGuthaben">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/geld.png" alt="Guthaben" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Zahlungsarten KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card cash">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Barzahlung Gesamt</div>
+          <div class="kpi-value" id="kpiKassenBarzahlung">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/geld.png" alt="Bar" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+    <div class="kpi-card paypal">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">PayPal Gesamt</div>
+          <div class="kpi-value" id="kpiKassenPayPal">0,00 €</div>
+        </div>
+        <img src="https://kglszxqlspnqkjokqqly.supabase.co/storage/v1/object/public/Betreuer/geld.png" alt="PayPal" style="width: 90px; height: 90px; object-fit: contain; z-index: 1;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Trainer & Betreuer KPIs -->
+  <h3 style="margin-top: 40px;">Trainer & Betreuer</h3>
+  <div class="kpi-grid" id="kassenstandTrainerGrid"></div>
+
+  <!-- Dubai Urlaub Ziel -->
+  <h3 style="margin-top: 40px;">🏖️ Dubai Urlaub Sparziel</h3>
+  <div style="background: linear-gradient(135deg, #1e90ff 0%, #87ceeb 50%, #ffd700 100%); border-radius: 12px; padding: 30px; margin-top: 20px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); position: relative; overflow: hidden;">
+    <!-- Palmen im Hintergrund -->
+    <div style="position: absolute; top: -10px; right: 20px; font-size: 80px; opacity: 0.3;">🌴</div>
+    <div style="position: absolute; bottom: -10px; left: 20px; font-size: 80px; opacity: 0.3;">🌴</div>
+    <div style="position: absolute; top: 0; right: 100px; font-size: 60px; opacity: 0.2;">🌊</div>
+    <div style="position: absolute; bottom: 0; right: 10px; font-size: 70px; opacity: 0.25;">☀️</div>
+    
+    <!-- Inhalt -->
+    <div style="position: relative; z-index: 1;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div>
+          <div style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.9); text-transform: uppercase; letter-spacing: 1px;">✈️ Ziel: 5.000,00 €</div>
+          <div style="font-size: 42px; font-weight: 900; color: white; margin-top: 12px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);" id="dubaiEsparto">0,00 €</div>
+          <div style="font-size: 14px; color: rgba(255, 255, 255, 0.95); margin-top: 8px; font-weight: 500;" id="dubaiRemaining">Noch 5.000,00 € bis zum Ziel</div>
+        </div>
+        <div style="font-size: 120px; opacity: 0.4; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">🏝️</div>
+      </div>
+      
+      <!-- Progress Bar mit Stil -->
+      <div style="background: rgba(255, 255, 255, 0.3); border-radius: 12px; height: 40px; overflow: hidden; margin-top: 20px; border: 2px solid rgba(255, 255, 255, 0.5); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <div id="dubaiProgressBar" style="background: linear-gradient(90deg, #ff6f00, #ffb300, #ffd700); height: 100%; width: 0%; transition: width 0.4s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);">
+          0%
+        </div>
+      </div>
+
+      <!-- Motivational Text -->
+      <div style="text-align: center; margin-top: 16px; font-size: 13px; color: rgba(255, 255, 255, 0.9); font-style: italic;">
+        🌴 Dubai wartet auf uns! 🌊 Mit jeder Strafe näher zum Traumurlaub! 🏝️
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ===== STRAFEN ===== -->
@@ -2073,6 +2182,12 @@ input[type="hidden"] {
 function show(id) {
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+  
+  // Lade Daten basierend auf Sektion
+  if (id === "kassenstand") {
+    loadKassenstand();
+  }
+  
   closeMenu();
 }
 
@@ -4051,6 +4166,110 @@ async function ladeGuthaben() {
 
   guthabenData = data || [];
   renderGuthabenList();
+}
+
+async function loadKassenstand() {
+  // Lade alle Strafen
+  const { data: strafen, error: strafeError } = await sb
+    .from("strafen")
+    .select("betrag, bezahlt, zahlungsart, mitglieder(typ)");
+
+  if (strafeError) {
+    console.error("Fehler beim Laden der Strafen:", strafeError);
+    return;
+  }
+
+  // Lade alle Guthaben
+  const { data: guthaben, error: guthabenError } = await sb
+    .from("guthaben")
+    .select("betrag, mitglieder(typ)");
+
+  if (guthabenError) {
+    console.error("Fehler beim Laden der Guthaben:", guthabenError);
+    return;
+  }
+
+  // Lade alle Mitglieder (Trainer und Betreuer)
+  const { data: members, error: memberError } = await sb
+    .from("mitglieder")
+    .select("id, vorname, nachname, typ");
+
+  if (memberError) {
+    console.error("Fehler beim Laden der Mitglieder:", memberError);
+    return;
+  }
+
+  // Filtere Admin aus
+  const filteredStrafen = (strafen || []).filter(s => s.mitglieder?.typ !== "admin");
+  const filteredGuthaben = (guthaben || []).filter(g => g.mitglieder?.typ !== "admin");
+
+  // 1. Strafen Gesamt
+  const strafenGesamt = filteredStrafen.reduce((sum, s) => sum + Number(s.betrag), 0);
+  document.getElementById("kpiKassenStrafenGesamt").textContent = strafenGesamt.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+
+  // 2. Bezahlte Strafen Gesamt
+  const bezahltGesamt = filteredStrafen
+    .filter(s => s.bezahlt)
+    .reduce((sum, s) => sum + Number(s.betrag), 0);
+  document.getElementById("kpiKassenBezahlt").textContent = bezahltGesamt.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+
+  // 3. Guthaben Gesamt
+  const guthabenGesamt = filteredGuthaben.reduce((sum, g) => sum + Number(g.betrag), 0);
+  document.getElementById("kpiKassenGuthaben").textContent = guthabenGesamt.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+
+  // 4. Barzahlung Gesamt
+  const barzahlungGesamt = filteredStrafen
+    .filter(s => s.bezahlt && s.zahlungsart === "bar")
+    .reduce((sum, s) => sum + Number(s.betrag), 0);
+  document.getElementById("kpiKassenBarzahlung").textContent = barzahlungGesamt.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+
+  // 5. PayPal Gesamt
+  const paypalGesamt = filteredStrafen
+    .filter(s => s.bezahlt && s.zahlungsart === "paypal")
+    .reduce((sum, s) => sum + Number(s.betrag), 0);
+  document.getElementById("kpiKassenPayPal").textContent = paypalGesamt.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+
+  // 6. Trainer & Betreuer KPIs
+  const trainersAndBetreuer = (members || []).filter(m => m.typ === "trainer" || m.typ === "betreuer").sort((a, b) => a.vorname.localeCompare(b.vorname));
+
+  const gridHTML = trainersAndBetreuer.map(person => {
+    // Summiere Strafen für diese Person
+    const personStrafenSummen = filteredStrafen
+      .filter(s => s.mitglieder?.id === person.id || (s.mitglieder?.vorname === person.vorname && s.mitglieder?.nachname === person.nachname))
+      .reduce((sum, s) => sum + Number(s.betrag), 0);
+
+    const icon = person.typ === "trainer" ? "👨‍🏫" : "👔";
+    const typLabel = person.typ === "trainer" ? "Trainer" : "Betreuer";
+
+    return `
+      <div class="kpi-card members">
+        <div class="kpi-header">
+          <div>
+            <div class="kpi-label">${icon} ${person.vorname} ${person.nachname}</div>
+            <div class="kpi-label" style="font-size: 12px; color: #999; text-transform: none; letter-spacing: 0;">${typLabel}</div>
+            <div class="kpi-value">${personStrafenSummen.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById("kassenstandTrainerGrid").innerHTML = gridHTML;
+
+  // 7. Dubai Urlaub Ziel (basierend auf Bezahlten Strafen)
+  const dubaiZiel = 5000;
+  const dubaiErsparto = bezahltGesamt;
+  const dubaiRemaining = Math.max(0, dubaiZiel - dubaiErsparto);
+  const dubaiProgress = Math.min(100, (dubaiErsparto / dubaiZiel) * 100);
+
+  document.getElementById("dubaiEsparto").textContent = dubaiErsparto.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+  document.getElementById("dubaiRemaining").textContent = dubaiRemaining > 0 
+    ? `Noch ${dubaiRemaining.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} € bis zum Ziel` 
+    : `🎉 Ziel erreicht! ${(dubaiErsparto - dubaiZiel).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} € über Ziel`;
+
+  const progressBar = document.getElementById("dubaiProgressBar");
+  progressBar.style.width = dubaiProgress + "%";
+  progressBar.textContent = Math.round(dubaiProgress) + "%";
 }
 
 function renderGuthabenList() {
